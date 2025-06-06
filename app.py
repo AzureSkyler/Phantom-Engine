@@ -9,7 +9,7 @@ import re
 
 
 # 全局常量
-API_KEY = "XXXXXXXXXX123"
+API_KEY = "XXXXXXXXXX1"
 
 BASE_URL = "https://www.runninghub.cn/task/openapi"
 U_CREATE = f"{BASE_URL}/create"
