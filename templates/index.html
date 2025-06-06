@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数字人生成平台</title>
+</head>
+<body>
+    <h1>数字人生成系统</h1>
+    <h2>上传人物图片、参考音频、想说的话</h2>
+    <form id="file-form">
+        <input type="file" name="image" accept="image/*" required>
+        <input type="file" name="audio" accept="audio/*" required>
+        <input type="text" name="text" placeholder="请输入要说的话" required>
+        <button type="submit">生成数字人</button>
+        <button onclick="cancelTask()" id="cancel-btn">取消任务</button>
+    </form>
+    <h2>任务状态</h2>
+    <p id="clone-audio-status"></p>
+    <p id="fix-image-status"></p>
+    <p id="i2v-status"></p>
+    <p id="lipsync-status"></p>
+
+    <a id="final-video"></a>
+
+
+ 
+    <script>
+    // 表单提交事件监听器
+    document.getElementById('file-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        // 发送任务请求
+        const startResponse = await fetch('/start', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await startResponse.json();
+        console.log("Start Response:", result);
+        // 显示取消按钮
+        document.getElementById('cancel-btn').style.display = 'block';
+        // 开始定时获取任务状态
+        getStatus();
+    });
+
+    // 获取并显示任务状态
+    async function getStatus() {
+        const res = await fetch('/status');
+        const data = await res.json();
+        document.querySelector('#fix-image-status').innerText = `图像修复: ${data.fix_image_task_id} - 状态: ${data.fix_image_status}`;
+        document.querySelector('#clone-audio-status').innerText = `音色克隆: ${data.clone_audio_task_id} - 状态: ${data.clone_audio_status}`;
+        document.querySelector('#i2v-status').innerText = `图生视频: ${data.i2v_task_id} - 状态: ${data.i2v_status}`;
+        document.querySelector('#lipsync-status').innerText = `唇形同步: ${data.lipsync_task_id} - 状态: ${data.lipsync_status}`;
+        // document.querySelector('#finalVideo').innerText = `唇形同步: ${data.lipsync_task_id} - 状态: ${data.lipsync_status}`;.innerText = `唇形同步: ${data.lipsync_task_id} - 状态: ${data.lipsync_status}`;
+        if (data.final_video != null && document.querySelector('#final-video').innerHTML == ""){
+            document.querySelector('#final-video').innerHTML = `
+            <h2>生成的视频</h2>
+            <video id="generated-video" controls width="640" height="360">
+                <source src="${data.final_video}" id="preVideo" type="video/mp4">
+            </video>
+            `;
+        }
+    }
+
+    // setInterval(() => {
+    //     getStatus()
+    // }, 1000);
+
+    // 取消任务
+    function cancelTask() {
+        fetch('/cancel', {
+            method: 'POST'
+        }).then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            // 停止轮询状态
+            // 注意：这里假设你有一个方法可以停止轮询，实际应用中可能需要更复杂的逻辑来控制
+        });
+    }
+
+    // 页面加载时获取一次状态
+    window.onload = getStatus;
+    </script>
+</body>
+</html>
