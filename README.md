@@ -1,6 +1,6 @@
 # <center>Phantom-Engine</center>
 
-## <center>如同幻象一般驱动那些再也触摸不到的人</center>
+## <center>如同幻象一般驱动那些再也触摸不到的人。</center>
 
 Phantom-Engine 是一套基于 ComfyUI 构建的图像流，专为数字人内容创作者打造。它将多个复杂步骤整合为一套完整的工作流，帮助用户高效完成从素材导入到成品输出的全过程，带来稳定、高质量的视觉呈现。
 
